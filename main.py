@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 '''
 DOWNLOAD YOUR PLAYLIST
 														 
@@ -13,8 +12,6 @@ How to use?
 	Enter playlist url: https://www.youtube.com/playlist?list=PLZTplHNMbAgbT6UhDKmz-LB3KoazwcRcG
 
 '''
-=======
->>>>>>> 7a055e67d1bdc74bd86abe01673f6f95ed5c46df
 import re
 import os
 from pytube import Playlist
