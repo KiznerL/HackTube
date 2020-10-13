@@ -1,68 +1,60 @@
-'''
-DOWNLOAD YOUR PLAYLIST
-														 
-Created by Kizner
-How to use?
- 1 - Type in the terminal to download all dependencies:
-
-	For Linux: pip3 -r install requeriments.txt
-	For Windows: pip -r install requeriments.txt
-
-2- Now, run the 'main.py' file and enter the url, example:
-	Enter playlist url: https://www.youtube.com/playlist?list=PLZTplHNMbAgbT6UhDKmz-LB3KoazwcRcG
-
-'''
 import re
 import os
 from pytube import Playlist
+from progress.bar import IncrementalBar
 
 
-def reciveVideo(url, condition):
-	playlist = Playlist(url)
-	playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
-	YOUTUBE_STREAM_AUDIO = '140'
+class Audio:
+    def __init__(self, url, condition):
+        self.playlist = Playlist(url)
+        self.playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
+        self.PLAYLIST_STREAM = '140'
 
-	if condition == 'y':
+    def checkDir(self, condition):
+        if condition == '3':
+            # Checks wheter the directory not exists
+            if not os.path.exists('My Playlist'):
+                # Create directory
+                os.makedirs('My Playlist')
 
-		# Checks whether the directory not exists
-		if not os.path.exists('Youtube Playlist'): 
-			# Create directory
-			os.makedirs('Youtube Playlist')
-
-		# Checks whether the directory exists
-		if os.path.exists('Youtube Playlist'):
-			count = len(playlist.video_urls)
-			count = str(count)
-			print('\n' + count + ' Videos in this playlist\n')
-			# Number of the video
-			num = 0
-			for video in playlist.videos:
-				num += 1
-				num2 = str(num)
-				print('Download ' + num2 + ' of ' + count)
-				print('Title: ' + video.title)
-				print('Author: ' + video.author + '\n')
-
-				try:
-					# Video Download
-					audioStream = video.streams.get_by_itag(YOUTUBE_STREAM_AUDIO)
-					audioStream.download(output_path='Youtube Playlist')
-					# Convert for .mp3 format
-					name = video.title + '.mp4'
-					path = 'Youtube Playlist/' + name
-					convert = os.path.splitext(name)[0]
-					# Rename file extension .mp4 for .mp3
-					os.rename(path, path + convert + '.mp3')
+            # Checks wheter the directory exists
+            if os.path.exists('My Playlist'):
+                count = len(self.playlist.video_urls)
+                bar = IncrementalBar('Download', max = count)
+                bar.next()
+                for video in self.playlist.videos:
+                    bar.next()
+                    # Download in mp4 format
+                    audioStream = video.streams.get_by_itag(self.PLAYLIST_STREAM)
+                    audioStream.download(output_path='My Playlist')
+                bar.finish()
 
 
-				except KeyError:
-					print('Sorry! Something unexpected happened, aborting...')
+print('''\n\n\n
+       ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▄▄▄█████▓ █    ██  ▄▄▄▄   ▓█████ 
+      ▓██░ ██▒▒████▄    ▒██▀ ▀█   ██▄█▒ ▓  ██▒ ▓▒ ██  ▓██▒▓█████▄ ▓█   ▀ 
+      ▒██▀▀██░▒██  ▀█▄  ▒▓█    ▄ ▓███▄░ ▒ ▓██░ ▒░▓██  ▒██░▒██▒ ▄██▒███   
+      ░▓█ ░██ ░██▄▄▄▄██ ▒▓▓▄ ▄██▒▓██ █▄ ░ ▓██▓ ░ ▓▓█  ░██░▒██░█▀  ▒▓█  ▄ 
+      ░▓█▒░██▓ ▓█   ▓██▒▒ ▓███▀ ░▒██▒ █▄  ▒██▒ ░ ▒▒█████▓ ░▓█  ▀█▓░▒████▒
+       ▒ ░░▒░▒ ▒▒   ▓▒█░░ ░▒ ▒  ░▒ ▒▒ ▓▒  ▒ ░░   ░▒▓▒ ▒ ▒ ░▒▓███▀▒░░ ▒░ ░
+       ▒ ░▒░ ░  ▒   ▒▒ ░  ░  ▒   ░ ░▒ ▒░    ░    ░░▒░ ░ ░ ▒░▒   ░  ░ ░  ░
+       ░  ░░ ░  ░   ▒   ░        ░ ░░ ░   ░       ░░░ ░ ░  ░    ░    ░   
+       ░  ░  ░      ░  ░░ ░      ░  ░               ░      ░         ░  ░
+                    ░                                       ░        
+''')
+print('''
+                             Select One Option
 
-	if condition == 'n':
-		print('\nOk! Aborting...')
+            [1]Video  [2]Áudio  [3]Playlist  [4]Playlist Áudio
 
+                                  [5]Exit
 
-url = input('Enter playlist URL: ')
-condition = input('Continue y/n? ')
-
-reciveVideo(url, condition)
+''')
+condition = input('>>> ')
+if condition == '5':
+    print('Closing...')
+if condition == '3':
+    print('Type Your URL:')
+    url = input('>>> ')
+    start = Audio(url, condition)
+    start.checkDir(condition)
